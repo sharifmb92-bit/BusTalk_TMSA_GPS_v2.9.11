@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>El Nombre De La App_v 1.0.0_v 2.9.11_GPS</title>
+    <title>El Nombre De La App_v 1.0.0_v 2.9.12_GPS</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -105,7 +105,6 @@
         .btn-ida-rojo { background-color: #dc2626 !important; border-color: #991b1b !important; color: #ffffff !important; font-weight: 900; }
         .btn-vuelta-ambar { background-color: #ff8c00 !important; border-color: #c2410c !important; color: #000000 !important; font-weight: 900; }
 
-        /* PUNTITO EN RUTA MÁS GRANDE Y CON PARPADEO */
         .punto-rojo { color: #dc2626 !important; font-size: 24px !important; animation: blink 0.8s infinite; }
         .punto-ambar { color: #ff8c00 !important; font-size: 24px !important; animation: blink 0.8s infinite; }
 
@@ -238,7 +237,7 @@
     <div x-show="!sesionIniciada" x-transition.opacity class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-6 backdrop-blur-md bg-black/90">
         <div class="bg-card p-8 rounded-[2rem] w-full max-w-sm text-center shadow-2xl border">
             <div class="text-yellow-500 text-6xl mb-4"><i class="fas fa-bus"></i><i class="fas fa-broadcast-tower text-3xl ml-2"></i></div>
-            <h2 class="text-xl font-black mb-1 uppercase tracking-wider text-primary">BusTalk_v 2.9.11_GPS</h2>
+            <h2 class="text-xl font-black mb-1 uppercase tracking-wider text-primary">BusTalk_v 2.9.12_GPS</h2>
             <p class="mb-4 text-xs text-sub font-bold">Introduce tu servicio (ej. L01) o selecciona ruta.</p>
             
             <input type="text" x-model="miBusInput" @input="procesarInputBus()" placeholder="Ej: L01" 
@@ -398,16 +397,18 @@
         </div>
     </div>
 
-    <!-- CABECERA COMPACTA UNIVERSAL CON EMBLEMA GRAPHICO (⬡ MB medbasha) -->
+    <!-- CABECERA COMPACTA UNIVERSAL CON CORRECCIÓN DE VISIBILIDAD DE LÍNEA -->
     <header class="p-2.5 bg-panel flex justify-between items-center border-b z-10 shadow-sm flex-shrink-0">
-        <div class="flex flex-col">
+        <div class="flex flex-col min-w-0 flex-1 mr-2">
             <div class="flex items-center space-x-2">
-                <span class="bg-yellow-500 text-black font-black px-2 py-0.5 rounded-md text-sm" x-text="miBus"></span>
-                <h1 class="text-lg font-black tracking-tighter italic text-primary">Bus<span class="text-amber-600">Talk</span> <span class="text-[9px] bg-green-700 text-white px-1 py-0.5 rounded ml-1 not-italic font-mono">v2.9.11</span></h1>
+                <span class="bg-yellow-500 text-black font-black px-2 py-0.5 rounded-md text-sm flex-shrink-0" x-text="miBus"></span>
+                <h1 class="text-lg font-black tracking-tighter italic text-primary flex-shrink-0">Bus<span class="text-amber-600">Talk</span> <span class="text-[9px] bg-green-700 text-white px-1 py-0.5 rounded ml-1 not-italic font-mono">v2.9.12</span></h1>
             </div>
-            <span class="text-[11px] font-black text-sky-600 mt-0.5 uppercase tracking-widest truncate max-w-[140px]" x-text="miLinea"></span>
+            <!-- LÍNEA CORREGIDA SIN LIMITACIÓN CSS DE CORTE -->
+            <span class="text-[11px] font-black text-sky-600 mt-0.5 uppercase tracking-wider truncate" x-text="miLinea || 'LÍNEA SIN DEFINIR'"></span>
         </div>
-        <div class="flex items-center space-x-1.5">
+
+        <div class="flex items-center space-x-1.5 flex-shrink-0">
             <!-- BOTÓN HYBRID: GPS AUTO / MANUAL -->
             <button @click="toggleModoGPS()" class="px-2 py-1 rounded-xl border text-[11px] font-black transition-all flex items-center gap-1 shadow-sm" 
                     :class="modoAutoGPS ? 'bg-green-600 text-white border-green-800' : 'bg-gray-700 text-gray-300 border-gray-600'">
@@ -567,7 +568,6 @@
                             <span x-text="enParada ? 'EN PARADA' : 'SALIR / RUTA'"></span>
                         </button>
 
-                        <!-- Modo SALIR / RUTA: Cuenta Atrás Adaptativa AMPLIADA A 30px CON MÁXIMO GROSOR -->
                         <div x-show="!enParada" class="flex justify-between items-center w-full mt-2 px-2">
                             <button @click="ajustarMinutos(-1)" class="w-9 h-9 bg-panel rounded-lg text-primary font-black text-xl active:bg-gray-400 flex items-center justify-center border">-</button>
                             <span class="font-black leading-none tracking-tight" style="font-size: 30px;" 
@@ -589,7 +589,7 @@
                     </div>
                 </div>
 
-                <!-- TIEMPO DETENIDO CON MÁXIMO CONTRASTE Y TAMAÑO GRANDE -->
+                <!-- TIEMPO DETENIDO -->
                 <div class="w-full text-center mb-3">
                     <span class="font-black text-tiempo-detenido tracking-wider" 
                           x-text="enParada ? 'PARADO: ' + formatearTiempoSegundos(segundosEnParadaActual) : 'ÚLT. PARADA: ' + formatearTiempoSegundos(ultimoTiempoParadoCongelado)"></span>
@@ -703,7 +703,6 @@
                 abrirPoniente: false, abrirLevante: false,
                 modoColor: 'noche', mostrarAvisoApagarRadio: false, mostrarAvisoFinalRuta: false,
                 
-                // SISTEMA DE AUTO-APAGADO POR INACTIVIDAD (1 HORA)
                 ultimaActividadTimestamp: Date.now(),
                 intervaloWatchdogInactividad: null,
 
@@ -751,7 +750,6 @@
                         await navigator.storage.persist();
                     }
 
-                    // REGISTRO Y VALIDACIÓN DE PIN ÚNICO (33000)
                     const pinValidado = await idb.get('bustalk_pin_v298');
                     if (pinValidado !== '33000') {
                         this.necesitaPin = true;
@@ -765,7 +763,10 @@
                         this.miBusInput = busGuardado;
                         this.procesarInputBus();
                     }
-                    if (lineaGuardada) this.miLineaInput = lineaGuardada;
+                    if (lineaGuardada) {
+                        this.miLineaInput = lineaGuardada;
+                        this.miLinea = lineaGuardada;
+                    }
                     if (modoGuardado) this.modoColor = modoGuardado;
                     
                     this.relojUI = setInterval(() => { this.compañeros = [...this.compañeros]; }, 1000);
@@ -781,15 +782,14 @@
                         }
                     }, 1000);
 
-                    // WATCHDOG AUTO-APAGADO TRAS 1 HORA DE INACTIVIDAD
                     this.intervaloWatchdogInactividad = setInterval(() => {
                         if (this.sesionIniciada) {
                             const tiempoInactivo = Date.now() - this.ultimaActividadTimestamp;
-                            if (tiempoInactivo >= (60 * 60 * 1000)) { // 1 Hora en milisegundos
+                            if (tiempoInactivo >= (60 * 60 * 1000)) {
                                 this.autoApagarPorInactividad();
                             }
                         }
-                    }, 30000); // Comprueba cada 30 segundos
+                    }, 30000);
 
                     setInterval(() => {
                         if (this.enParada && this.sesionIniciada) {
@@ -946,12 +946,14 @@
                     const limpia = txt.replace(/\s+/g, '');
                     if (mapaServicios[limpia]) {
                         this.miLineaInput = mapaServicios[limpia];
+                        this.miLinea = mapaServicios[limpia];
                     }
                 },
 
                 seleccionarLineaModal(linea) {
                     this.registrarActividad();
                     this.miLineaInput = linea;
+                    this.miLinea = linea;
                     this.mostrarModalZonas = false;
 
                     const mapaInverso = {
@@ -1062,17 +1064,12 @@
                     this.evaluarSentidoIda();
                 },
 
-                // REGLA DE COLORES UNIFICADA POR SENTIDO GEOGRÁFICO
                 evaluarSentidoIda() {
                     if (this.misParadasArray.length > 0) {
                         const origen = this.misParadasArray[0];
-                        
-                        // Levante -> Poniente (Salidas desde Maó y sus vueltas): ROJO
                         if (origen === 'Maó' || origen.includes('Maó')) {
                             this.esSentidoIda = true;
-                        } 
-                        // Poniente -> Levante (Salidas desde Ciutadella / Galdana / Sant Tomàs): NARANJA
-                        else {
+                        } else {
                             this.esSentidoIda = false;
                         }
                     }
@@ -1093,11 +1090,9 @@
                         "S. Lluís-P. Prima": 7, "P. Prima-S. Lluís": 7,
                         "S. Lluís-Binibèquer": 10, "Binibèquer-S. Lluís": 10,
                         "Ferr-Galdana": 11, "Galdana-Ferr": 11,
-                        /* LANZADERA L53 / CALA GALDANA TIEMPOS EXACTOS (IDA Y VUELTA 11 MIN) */
                         "Ferr-Cementerio": 2, "Cementerio-Camping": 3, "Camping-C. Mitjana": 2, "C. Mitjana-Galdana": 4,
                         "Galdana-C. Mitjana": 2, "C. Mitjana-Camping": 3, "Camping-Cementerio": 3, "Cementerio-Ferr": 3,
                         "Mer-Migjorn": 12, "Migjorn-Mer": 12,
-                        /* SANT TOMÀS TIEMPOS EXACTOS */
                         "Migjorn-S. Tomàs 1ª": 8, "S. Tomàs 1ª-S. Tomàs 2ª": 1, "S. Tomàs 2ª-S. Tomàs 3ª": 2,
                         "S. Tomàs 3ª-Migjorn": 8, "S. Tomàs 1ª-Migjorn": 8,
                         "Alaior C.-Migjorn": 12, "Migjorn-Alaior C.": 12,
@@ -1107,6 +1102,7 @@
                 },
 
                 esMismaZona(lineaA, lineaB) {
+                    if (!lineaA || !lineaB) return false;
                     if (lineaA === 'General' || lineaB === 'General') return true;
                     
                     const esL01_A = lineaA.includes('L01');
@@ -1119,7 +1115,7 @@
 
                     if (lineaA === lineaB) return true;
                     
-                    const poniente = ["Zona Centro y Poniente", "L52 (Ciu - Galdana)", "L51 (Maó - Galdana)", "L53 (Ferreries - Galdana)", "L72 (Ciu - S. Tomàs)", "L71 (Maó - S. Tomàs)", "L32 (Maó - Son Bou)", "L01 (Ciu - Maó)", "L01 (Maó - Ciu)"];
+                    const poniente = ["Zona Centro y Poniente", "L52 (Ciu - Galdana)", "L51 (Maó - Galdana)", "L53 (Ferreries - Galdana)", "L72 (Ciu - S. Tomàs)", "L71 (Maó - S. Tomàs)", "L32 (Maó - Son Bou)", "L01 (Ciu - Maó)", "L01 (Maó - Ciu)", "L71 (S. Tomàs - Maó)", "L72 (S. Tomàs - Ciu)", "L51 (Galdana - Maó)", "L52 (Galdana - Ciu)", "L53 (Galdana - Ferr)"];
                     if (poniente.includes(lineaA) && poniente.includes(lineaB)) return true;
                     
                     const levante = ["Zona Maó y Levante", "L02 (Maó - Castell)", "L03 (Maó - S. Lluís)", "L21 (Maó - S. Climent)", "L22 (Maó - Canutells)", "L31 (Maó - C. Porter)", "L08 (Maó - C. Porter)", "L91 (Maó - S\'Algar)", "L92 (Maó - P. Prima)", "L93 (Maó - Binibèquer)"];
@@ -1154,24 +1150,26 @@
                     this.actualizarMiEstadoBD();
                 },
 
-                // RECONEXIÓN Y RENOMBRADO DINÁMICO EN CALA GALDANA
                 cambiarServicioGaldana(lineaDestino) {
                     this.registrarActividad();
                     if (lineaDestino === 'L51') {
                         this.miLinea = "L51 (Galdana - Maó)";
+                        this.miLineaInput = "L51 (Galdana - Maó)";
                         this.misParadasArray = ["Galdana", "C. Mitjana", "Camping", "Cementerio", "Ferr", "Mer", "Alaior C.", "Alaior P.", "Argen", "Maó"];
                     } else if (lineaDestino === 'L52') {
                         this.miLinea = "L52 (Galdana - Ciu)";
+                        this.miLineaInput = "L52 (Galdana - Ciu)";
                         this.misParadasArray = ["Galdana", "C. Mitjana", "Camping", "Cementerio", "Ferr", "Ciu"];
                     } else if (lineaDestino === 'L53') {
                         this.miLinea = "L53 (Galdana - Ferr)";
+                        this.miLineaInput = "L53 (Galdana - Ferr)";
                         this.misParadasArray = ["Galdana", "C. Mitjana", "Camping", "Cementerio", "Ferr"];
                     }
                     
                     idb.set('bustalk_linea', this.miLinea);
                     this.miUbicacion = "Galdana";
                     this.enParada = true;
-                    this.esSentidoIda = false; // VUELTA = NARANJA
+                    this.esSentidoIda = false;
                     
                     this.mostrarModalResumen = false;
                     this.segundosEnParadaActual = 0;
@@ -1187,21 +1185,22 @@
                     this.actualizarMiEstadoBD();
                 },
 
-                // RECONEXIÓN Y RENOMBRADO DINÁMICO EN SANT TOMÀS
                 cambiarServicioTomas(lineaDestino) {
                     this.registrarActividad();
                     if (lineaDestino === 'L71') {
                         this.miLinea = "L71 (S. Tomàs - Maó)";
+                        this.miLineaInput = "L71 (S. Tomàs - Maó)";
                         this.misParadasArray = ["S. Tomàs 1ª", "S. Tomàs 2ª", "S. Tomàs 3ª", "Migjorn", "Alaior C.", "Alaior P.", "Argen", "Maó"];
                     } else if (lineaDestino === 'L72') {
                         this.miLinea = "L72 (S. Tomàs - Ciu)";
+                        this.miLineaInput = "L72 (S. Tomàs - Ciu)";
                         this.misParadasArray = ["S. Tomàs 1ª", "S. Tomàs 2ª", "S. Tomàs 3ª", "Migjorn", "Mer", "Ferr", "Ciu"];
                     }
                     
                     idb.set('bustalk_linea', this.miLinea);
                     this.miUbicacion = "S. Tomàs 1ª";
                     this.enParada = true;
-                    this.esSentidoIda = false; // VUELTA = NARANJA
+                    this.esSentidoIda = false;
                     
                     this.mostrarModalResumen = false;
                     this.segundosEnParadaActual = 0;
@@ -1217,7 +1216,6 @@
                     this.actualizarMiEstadoBD();
                 },
 
-                // FUNCIÓN DE RE-SUSCRIPCIÓN EN TIEMPO REAL A FIREBASE
                 reiniciarEscuchasFirebase() {
                     if (this.unsubBuses) this.unsubBuses();
                     if (this.unsubRadio) this.unsubRadio();
@@ -1434,14 +1432,12 @@
                 verificarFinalRuta() {
                     let idx = this.misParadasArray.indexOf(this.miUbicacion);
                     
-                    // LLEGADA A 1ª PARADA DE SANT TOMÀS
                     if (this.miUbicacion === 'S. Tomàs 1ª' && this.enParada) {
                         this.esTerminalTomas = true;
                         this.mostrarAvisoFinalRuta = true;
                         return;
                     }
 
-                    // LLEGADA A TERMINAL FINAL SENSING
                     if (idx === this.misParadasArray.length - 1 && this.enParada) {
                         this.esTerminalGaldana = (this.miUbicacion === 'Galdana');
                         this.mostrarAvisoFinalRuta = true;
